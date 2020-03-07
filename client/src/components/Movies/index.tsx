@@ -22,16 +22,23 @@ const MovieList = () => {
     const [data, setData] = useState([]);
     const [movieCount, setMovieCount] = useState(0);
     const [pageSize, setPageSize] = useState(0);
+    const [customers, setCustomers] = useState([]);
 
     const fetchMovies = (page: number = 1) => {
         axios.get('https://yts.mx/api/v2/list_movies.json',
             { params: { page } })
             .then(function (response) {
-                console.log(response);
+                // console.log(response);
                 setData(response.data.data.movies);
                 setMovieCount(response.data.data.movie_count);
                 setPageSize(response.data.data.limit);
             });
+        fetch('/api/customers')
+            .then(res => {
+                console.log(res);
+                return res.json();
+            })
+            .then((customers: any) => setCustomers(customers))
     }
 
     useEffect(() => {
@@ -41,6 +48,7 @@ const MovieList = () => {
 
     return (
         <div className="movies">
+            {console.log(customers)}
             {(data.length > 0) ?
                 <List
                     itemLayout="vertical"
