@@ -1,29 +1,43 @@
 const express = require('express');
 const app = express();
 const axios = require('axios');
+const yts_api_base_url = 'https://yts.mx/api/v2/';
 
+// Server Base URL
 app.get('/', (req, res) => {
     res.json('Hello world');
 });
-app.get('/api/customers', (req, res) => {
-    // console.log(req);
-    // console.log(res);
-    const customers = [
-        { id: 1, firstName: 'Johns', lastName: 'Doe' },
-        { id: 2, firstName: 'Steve', lastName: 'Smith' },
-        { id: 3, firstName: 'Mary', lastName: 'Swanson' }
-    ];
 
-    // axios.get('https://yts.mx/api/v2/list_movies.json',
-    //     { params: { page } })
-    //     .then(function (response) {
-    //         console.log(response);
-    //         setData(response.data.data.movies);
-    //         setMovieCount(response.data.data.movie_count);
-    //         setPageSize(response.data.data.limit);
-    //     });
+// Get All Movies
+app.get('/api/movies', async (req, res, next) => {
 
-    res.json(customers);
+    await axios.get(yts_api_base_url + 'list_movies.json',
+        {
+            params: {
+                page: req.query.page,
+                limit: 24
+            }
+        })
+        .then(result => {
+            res.json({
+                movie_list: result.data.data.movies,
+                movie_count: result.data.data.movie_count,
+                page_size: result.data.data.limit,
+            });
+        })
+        .catch(err => res.send(err));
+
+});
+
+// Get Movie Detail
+app.get('/api/movie/:uid', async (req, res, next) => {
+
+    await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
+        .then(result => {
+            res.json(result.data.data.movie);
+        })
+        .catch(err => res.send(err));
+
 });
 
 const port = process.env.PORT || 5000;

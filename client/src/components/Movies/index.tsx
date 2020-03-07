@@ -1,106 +1,80 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import Img from 'react-image';
+import { List, Card, Skeleton, Pagination, Spin } from 'antd';
+import './styles.scss';
 
-import { List, Card, Avatar, Skeleton } from 'antd';
-import { MessageOutlined, LikeOutlined, StarOutlined } from '@ant-design/icons';
+const { Meta } = Card;
 
-interface test {
-    icon: any;
-    text: any;
-    key: any;
+interface IMovies {
+    movie_list: [];
+    movie_count: number;
+    page_size: number;
 }
-
-const IconText = (props: test) => (
-    <span>
-        {React.createElement(props.icon, { style: { marginRight: 8 } })}
-        {props.text}
-    </span>
-);
 
 const MovieList = () => {
 
-    const [data, setData] = useState([]);
+    const [movies, setMovies] = useState([]);
     const [movieCount, setMovieCount] = useState(0);
     const [pageSize, setPageSize] = useState(0);
-    const [customers, setCustomers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchMovies = (page: number = 1) => {
-        axios.get('https://yts.mx/api/v2/list_movies.json',
-            { params: { page } })
-            .then(function (response) {
-                // console.log(response);
-                setData(response.data.data.movies);
-                setMovieCount(response.data.data.movie_count);
-                setPageSize(response.data.data.limit);
-            });
-        fetch('/api/customers')
-            .then(res => {
-                console.log(res);
-                return res.json();
+    const fetchMovies = async (page: number = 1) => {
+        await fetch('/api/movies?page=' + page)
+            .then(res => res.json())
+            .then((result: IMovies) => {
+                setMovies(result.movie_list);
+                setMovieCount(result.movie_count);
+                setPageSize(result.page_size);
+                setCurrentPage(page);
             })
-            .then((customers: any) => setCustomers(customers))
     }
 
     useEffect(() => {
         fetchMovies();
     }, []);
 
-
     return (
         <div className="movies">
-            {console.log(customers)}
-            {(data.length > 0) ?
+            <Pagination
+                total={movieCount}
+                showTotal={total => `Total ${total} items`}
+                pageSize={pageSize}
+                current={currentPage}
+                onChange={fetchMovies}
+            />
+            {(movies.length > 0) ?
                 <List
-                    itemLayout="vertical"
-                    size="large"
-                    pagination={{
-                        onChange: page => {
-                            fetchMovies(page);
-                        },
-                        defaultCurrent: 1,
-                        pageSize: pageSize,
-                        total: movieCount
-                    }}
-                    dataSource={data}
-                    footer={
-                        <div> <b>ant design</b> footer part</div>
-                    }
+                    grid={{ gutter: 16, column: 6 }}
+                    dataSource={movies}
                     renderItem={(item: any) => (
-                        <List.Item
-                            key={item.title}
-                            actions={[
-                                <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                                <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                                <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-                            ]}
-                            extra={
-                                <img
-                                    width={272}
-                                    alt={item.title_long}
-                                    src={item.medium_cover_image}
+                        <List.Item>
+                            <Card
+                                hoverable
+                                cover={
+                                    <Img
+                                        src={item.medium_cover_image}
+                                        alt={item.title_long}
+                                        loader={<Spin />} />
+                                } >
+                                <Meta
+                                    title={item.title}
+                                    description={item.year}
                                 />
-                            }
-                        >
-                            <List.Item.Meta
-                                title={<a href={item.href}>{item.title}</a>}
-                            />
-                            {item.description_full}
+                            </Card>
                         </List.Item>
-                    )}
+                    )
+                    }
                 /> : <Skeleton avatar paragraph={{ rows: 4 }} />
             }
-            {/* <List
-                grid={{ gutter: 16, column: 4 }}
-                dataSource={data}
-                renderItem={(item: any) => (
-
-                    < List.Item >
-                        <Card title={item.title}>Card content</Card>
-                    </List.Item>
-                )}
-            /> */}
-
-        </div>
+            <Pagination
+                total={movieCount}
+                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                pageSize={pageSize}
+                current={currentPage}
+                onChange={fetchMovies}
+            />
+        </div >
     );
 }
 
