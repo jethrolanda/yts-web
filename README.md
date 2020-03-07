@@ -5,7 +5,7 @@ In the project directory, you can run:
 ### `yarn start or npm start`
 
 Runs the backend express server.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
 
 ### `yarn server or npm run server`
 
