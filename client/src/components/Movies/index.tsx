@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import Img from 'react-image';
 import { List, Card, Skeleton, Pagination, Spin } from 'antd';
 import './styles.scss';
@@ -19,8 +19,8 @@ const MovieList = () => {
     const [pageSize, setPageSize] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchMovies = async (page: number = 1) => {
-        await fetch('/api/movies?page=' + page)
+    const fetchMovies = async (page: number = 1, per_page: number = 24) => {
+        await fetch('/api/movies?page=' + page + '&per_page=' + per_page)
             .then(res => res.json())
             .then((result: IMovies) => {
                 setMovies(result.movie_list);
@@ -37,6 +37,9 @@ const MovieList = () => {
     return (
         <div className="movies">
             <Pagination
+                showSizeChanger
+                pageSizeOptions={['24', '48']}
+                onShowSizeChange={(current, pageSize) => fetchMovies(current, pageSize)}
                 total={movieCount}
                 showTotal={total => `Total ${total} items`}
                 pageSize={pageSize}
@@ -49,25 +52,30 @@ const MovieList = () => {
                     dataSource={movies}
                     renderItem={(item: any) => (
                         <List.Item>
-                            <Card
-                                hoverable
-                                cover={
-                                    <Img
-                                        src={item.medium_cover_image}
-                                        alt={item.title_long}
-                                        loader={<Spin />} />
-                                } >
-                                <Meta
-                                    title={item.title}
-                                    description={item.year}
-                                />
-                            </Card>
+                            <Link to={`/movie/${item.id}`}>
+                                < Card
+                                    hoverable
+                                    cover={
+                                        <Img
+                                            src={item.medium_cover_image}
+                                            alt={item.title_long}
+                                            loader={<Spin />} />
+                                    } >
+                                    <Meta
+                                        title={item.title}
+                                        description={item.year}
+                                    />
+                                </Card>
+                            </Link>
                         </List.Item>
                     )
                     }
-                /> : <Skeleton avatar paragraph={{ rows: 4 }} />
+                /> : <Skeleton paragraph={{ rows: 4 }} />
             }
             <Pagination
+                showSizeChanger
+                pageSizeOptions={['24', '48']}
+                onShowSizeChange={(current, pageSize) => fetchMovies(current, pageSize)}
                 total={movieCount}
                 showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
                 pageSize={pageSize}
