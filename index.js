@@ -16,7 +16,7 @@ app.get('/api/movies', async (req, res, next) => {
             params: {
                 page: req.query.page,
                 limit: req.query.per_page,
-                query_term: req.query.search
+                query_term: req.query.query_term
             }
         })
         .then(result => {
@@ -43,6 +43,17 @@ app.get('/api/movie/:uid', async (req, res, next) => {
 
 // Search Movies
 app.get('/api/movies/:uid', async (req, res, next) => {
+
+    await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
+        .then(result => {
+            res.json(result.data.data.movie);
+        })
+        .catch(err => res.send(err));
+
+});
+
+// Search Movies
+app.get('/api/movies/featured', async (req, res, next) => {
 
     await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
         .then(result => {

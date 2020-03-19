@@ -18,3 +18,4 @@ Runs the react app without switching directory.<br />
 ### `yarn dev or npm run dev`
 
 Runs the react app and the express server concurrently.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

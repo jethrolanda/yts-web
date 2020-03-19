@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Link } from "react-router-dom";
 import Img from 'react-image';
 import { List, Card, Skeleton, Pagination, Spin } from 'antd';
+import { connect } from 'react-redux';
+
+// Actions
+import { MovieActions } from '../../actions/movieAction';
+
+import { bindActionCreators } from "redux";
+
+
 import './styles.scss';
 
 const { Meta } = Card;
@@ -12,48 +20,60 @@ interface IMovies {
     page_size: number;
 }
 
-const MovieList = () => {
+const { fetchMovies, loadingMovies } = MovieActions;
 
-    const [movies, setMovies] = useState([]);
-    const [movieCount, setMovieCount] = useState(0);
-    const [pageSize, setPageSize] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
+const MovieList = (props: any) => {
 
-    const fetchMovies = async (page: number = 1, per_page: number = 24) => {
-        await fetch('/api/movies?page=' + page + '&per_page=' + per_page)
-            .then(res => res.json())
-            .then((result: IMovies) => {
-                setMovies(result.movie_list);
-                setMovieCount(result.movie_count);
-                setPageSize(result.page_size);
-                setCurrentPage(page);
-            })
-    }
+    const { actions, data } = props;
+    const { movies, movieCount, pageSize, currentPage, isSearching } = data;
+
+    const fetchMoviesTrigger = useCallback((page: number = 1, per_page: number = 24) => {
+
+        actions.loadingMovies(true);
+        actions.fetchMovies({
+            page,
+            per_page,
+            processCB: () => {
+                console.log('processing');
+            },
+            successCB: () => {
+                console.log('success');
+            },
+            failCB: () => {
+                console.log('fail');
+            }
+        });
+
+    }, [actions]);
 
     useEffect(() => {
-        fetchMovies();
-    }, []);
+
+        // Step: 1
+        // This is the trigger, will call the actions
+        fetchMoviesTrigger();
+
+    }, [fetchMoviesTrigger]);
 
     return (
         <div className="movies">
             <Pagination
                 showSizeChanger
                 pageSizeOptions={['24', '48']}
-                onShowSizeChange={(current, pageSize) => fetchMovies(current, pageSize)}
+                onShowSizeChange={(current, pageSize) => fetchMoviesTrigger(current, pageSize)}
                 total={movieCount}
                 showTotal={total => `Total ${total} items`}
                 pageSize={pageSize}
                 current={currentPage}
-                onChange={fetchMovies}
+                onChange={fetchMoviesTrigger}
             />
-            {(movies.length > 0) ?
+            {movies && !isSearching ?
                 <List
                     grid={{ gutter: 16, column: 6 }}
                     dataSource={movies}
                     renderItem={(item: any) => (
                         <List.Item>
                             <Link to={`/movie/${item.id}`}>
-                                < Card
+                                <Card
                                     hoverable
                                     cover={
                                         <Img
@@ -75,15 +95,21 @@ const MovieList = () => {
             <Pagination
                 showSizeChanger
                 pageSizeOptions={['24', '48']}
-                onShowSizeChange={(current, pageSize) => fetchMovies(current, pageSize)}
+                onShowSizeChange={(current, pageSize) => fetchMoviesTrigger(current, pageSize)}
                 total={movieCount}
-                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                showTotal={total => `Total ${total} items`}
                 pageSize={pageSize}
                 current={currentPage}
-                onChange={fetchMovies}
+                onChange={fetchMoviesTrigger}
             />
         </div >
     );
 }
 
-export default MovieList;
+const mapStateToProps = (store: any) => ({ data: store.movies, isSearching: store.isSearching });
+
+const mapDispatchToProps = (dispatch: any) => ({
+    actions: bindActionCreators({ fetchMovies, loadingMovies }, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovieList);

@@ -2,6 +2,7 @@ import React from 'react';
 import SearchMovies from './components/SearchMovies/';
 import MovieList from './components/Movies/';
 import Movie from './components/Movies/Movie';
+import Home from './components/Home';
 import {
   BrowserRouter as Router,
   Switch,
@@ -29,8 +30,7 @@ function App() {
         <Content className="site-layout-background" style={{ padding: '0 50px' }}>
           <Switch>
             <Route exact path="/">
-              <SearchMovies />
-              <MovieList />
+              <Home />
             </Route>
             <Route path="/movies">
               <SearchMovies />
