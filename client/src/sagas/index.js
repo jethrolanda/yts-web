@@ -58,34 +58,59 @@ export function* searchMovies(action) {
 export function* featuredMovies(action) {
 
     try {
-        console.log(action)
-        const response = yield call(() =>
+
+
+        const data = yield call(() =>
             axios('https://yts.mx/')
                 .then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
                     const featuredMovies = $('#popular-downloads .browse-movie-wrap');
-                    const featuredMoviesList = [];
 
-                    featuredMovies.each(function () {
-                        const title = $(this).find('.browse-movie-bottom .browse-movie-title').text();
-                        const year = $(this).find('.browse-movie-bottom .browse-movie-year').text();
 
-                        const search_movie = axios.get('/api/movies?query_term=' + title + ' ' + year);
+                    var myPromise = new Promise(function (resolve, reject) {
+                        const featuredMoviesList = [];
 
-                        console.log(search_movie);
 
-                        featuredMoviesList.push({ title, year });
+                        featuredMovies.each(async function () {
+
+                            const movieLink = $(this).find('a.browse-movie-link').attr('href');
+
+                            const movieData = await axios(movieLink)
+                                .then(async movieDetails => {
+                                    const htmlDetails = movieDetails.data;
+                                    const $details = cheerio.load(htmlDetails);
+
+                                    const movieID = $details('#movie-info').attr('data-movie-id');
+                                    if (movieID)
+                                        return await axios.get('/api/movie/' + movieID);
+                                    else
+                                        return null;
+                                });
+
+                            featuredMoviesList.push(movieData.data);
+
+                        });
+
+                        setInterval(function () {
+                            if (featuredMoviesList.length >= 4)
+                                resolve(featuredMoviesList);
+                        }, 300);
+
                     });
-                    console.log(featuredMoviesList);
+
+                    return myPromise.then(function (result) {
+                        return result;
+                    });
 
                 })
                 .catch(console.error)
         );
 
-        if (response && response.data) {
-
-
+        if (data) {
+            yield put(
+                MovieActions.setFeaturedMovies({ data })
+            );
         }
 
     } catch (e) {
@@ -97,7 +122,7 @@ export function* featuredMovies(action) {
 export const actionListener = [
     takeEvery(MOVIE_TYPES.FETCH_MOVIES, fetchMovies),
     takeEvery(MOVIE_TYPES.SEARCH_MOVIES, searchMovies),
-    takeEvery(MOVIE_TYPES.FEATURED_MOVIES, featuredMovies)
+    takeEvery(MOVIE_TYPES.FETCH_FEATURED_MOVIES, featuredMovies)
 ];
 
 export default function* rootSaga() {

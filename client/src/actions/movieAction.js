@@ -19,8 +19,12 @@ export const MovieActions = {
         type: MOVIE_TYPES.LOADING_MOVIES,
         payload
     }),
-    featuredMovies: (payload) => ({
-        type: MOVIE_TYPES.FEATURED_MOVIES,
+    fetchFeaturedMovies: (payload) => ({
+        type: MOVIE_TYPES.FETCH_FEATURED_MOVIES,
+        payload
+    }),
+    setFeaturedMovies: (payload) => ({
+        type: MOVIE_TYPES.SET_FEATURED_MOVIES,
         payload
     })
 };
