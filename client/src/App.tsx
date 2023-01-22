@@ -7,48 +7,64 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import "antd/dist/reset.css";
 import "./styles.scss";
-
-import { Layout, Button } from "antd";
-const { Header, Content } = Layout;
+import { VideoCameraOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+const { Header, Content, Footer } = Layout;
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Header style={{ color: "#fff" }}>
-          <Link to="/">YTS Movies</Link>
-          <ul className="menu">
-            <li>
-              <Link to="/">
-                <Button type="primary">Home</Button>
-              </Link>
-            </li>
-            <li>
-              <Link to="/movies">
-                <Button type="primary">Browse Movies</Button>
-              </Link>
-            </li>
-          </ul>
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{ padding: "0 50px" }}
-        >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/movies"
-              element={
-                <>
-                  <SearchMovies />
-                  <MovieList />
-                </>
+      <Layout className="layout">
+        <Header>
+          <div
+            style={{
+              float: "left",
+              width: 80,
+              height: 50,
+              margin: "6px 24px 14px 0px",
+              background: "rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <VideoCameraOutlined style={{ fontSize: "20px", color: "#fff" }} />
+          </div>
+
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={["1"]}
+            items={[
+              { key: 1, label: <Link to="/">Home</Link> },
+              {
+                key: 2,
+                label: <Link to="/movies">Browse Movies</Link>
               }
-            ></Route>
-            <Route path="/movie/:id" element={<Movie />} />
-          </Routes>
+            ]}
+          />
+        </Header>
+        <Content style={{ padding: "0 50px" }}>
+          <div className="site-layout-content" style={{ background: "#eee" }}>
+            <Routes>
+              <Route
+                path="/movies"
+                element={
+                  <>
+                    <SearchMovies />
+                    <MovieList />
+                  </>
+                }
+              ></Route>
+              <Route path="/movie/:id" element={<Movie />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </div>
         </Content>
-      </div>
+        <Footer style={{ textAlign: "center" }}>
+          Ant Design ©2023 Created by Ant UED
+        </Footer>
+      </Layout>
     </Router>
   );
 }

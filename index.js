@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 // Get All Movies
 app.get('/api/movies', async (req, res, next) => {
 
-    await axios.get(yts_api_base_url + 'list_movies.json',
+    await axios.get(`${yts_api_base_url}list_movies.json`,
         {
             params: {
                 page: req.query.page,
@@ -20,6 +20,7 @@ app.get('/api/movies', async (req, res, next) => {
             }
         })
         .then(result => {
+            
             res.json({
                 movie_list: result.data.data.movies,
                 movie_count: result.data.data.movie_count,
@@ -33,7 +34,7 @@ app.get('/api/movies', async (req, res, next) => {
 // Get Movie Detail
 app.get('/api/movie/:uid', async (req, res, next) => {
 
-    await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
+    await axios.get(`${yts_api_base_url}movie_details.json?movie_id=${req.params.uid}`)
         .then(result => {
             res.json(result.data.data.movie);
         })
@@ -44,7 +45,7 @@ app.get('/api/movie/:uid', async (req, res, next) => {
 // Search Movies
 app.get('/api/movies/:uid', async (req, res, next) => {
 
-    await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
+    await axios.get(`${yts_api_base_url}movie_details.json?movie_id=${req.params.uid}`)
         .then(result => {
             res.json(result.data.data.movie);
         })
@@ -52,11 +53,12 @@ app.get('/api/movies/:uid', async (req, res, next) => {
 
 });
 
-// Search Movies
+// Featured Movies
 app.get('/api/movies/featured', async (req, res, next) => {
 
-    await axios.get(yts_api_base_url + 'movie_details.json?movie_id=' + req.params.uid)
+    await axios.get(`${yts_api_base_url}movie_details.json?movie_id=${req.params.uid}`)
         .then(result => {
+            console.log(result)
             res.json(result.data.data.movie);
         })
         .catch(err => res.send(err));

@@ -66,7 +66,14 @@ const MovieList = (props: any) => {
       />
       {movies && !isSearching ? (
         <List
-          grid={{ gutter: 16, column: 6 }}
+          grid={{
+            gutter: 16,
+            column: 6,
+            xs: 1,
+            sm: 2,
+            md: 4,
+            lg: 4
+          }}
           dataSource={movies}
           renderItem={(item: any) => (
             <List.Item>
@@ -88,7 +95,30 @@ const MovieList = (props: any) => {
           )}
         />
       ) : (
-        <Skeleton paragraph={{ rows: 4 }} />
+        <List
+          grid={{
+            gutter: 16,
+            column: 6,
+            xs: 1,
+            sm: 2,
+            md: 4,
+            lg: 4
+          }}
+          dataSource={new Array(12).fill(null).map((_, index) => {
+            const key = index + 1;
+            return {
+              key,
+              label: `nav ${key}`
+            };
+          })}
+          renderItem={(item: any) => (
+            <List.Item>
+              <Card hoverable cover={<Skeleton.Image active />}>
+                <Meta title={<Skeleton paragraph={{ rows: 1 }} />} />
+              </Card>
+            </List.Item>
+          )}
+        />
       )}
       <Pagination
         showSizeChanger

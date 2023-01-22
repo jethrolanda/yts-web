@@ -18,9 +18,9 @@ export function* fetchMovies(action) {
     try {
 
         const response = yield call(() =>
-            axios.get('/api/movies?page=' + page + '&per_page=' + per_page)
+            axios.get(`/api/movies?page=${page}&per_page=${per_page}`)
         );
-
+        
         if (response && response.data) {
             const data = { ...response.data, page };
             yield put(
@@ -39,7 +39,7 @@ export function* searchMovies(action) {
     try {
 
         const response = yield call(() =>
-            axios.get('/api/movies?query_term=' + action.payload)
+            axios.get(`/api/movies?query_term=${action.payload}`)
         );
 
         if (response && response.data) {
@@ -59,7 +59,11 @@ export function* featuredMovies(action) {
 
     try {
 
-
+        const response = yield call(() =>
+            axios.get('/api/movies/featured')
+        );
+        console.log(response)
+        
         const data = yield call(() =>
             axios('https://yts.mx/')
                 .then(response => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { List, Card, Skeleton, Spin, Image } from "antd";
+import { List, Card, Skeleton, Spin, Image, Space } from "antd";
 import { Link } from "react-router-dom";
 
 // Actions
@@ -33,7 +33,6 @@ const Home = (props: any) => {
             <List.Item>
               <Link to={`/movie/${item.id}`}>
                 <Card
-                  hoverable
                   cover={
                     <Image
                       src={item.medium_cover_image}
@@ -49,7 +48,26 @@ const Home = (props: any) => {
           )}
         />
       ) : (
-        <Skeleton paragraph={{ rows: 4 }} />
+        <List
+          grid={{ gutter: 50, column: 6 }}
+          dataSource={[1, 2, 3, 4]}
+          renderItem={(item: any) => (
+            <List.Item>
+              <Card
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  width: "100%"
+                }}
+                cover={<Skeleton.Image active />}
+              >
+                <Meta title={<Skeleton paragraph={{ rows: 1 }} />} />
+              </Card>
+            </List.Item>
+          )}
+        />
       )}
     </div>
   );
