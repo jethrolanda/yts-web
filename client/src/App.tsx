@@ -44,8 +44,8 @@ function App() {
             ]}
           />
         </Header>
-        <Content style={{ padding: "0 50px" }}>
-          <div className="site-layout-content" style={{ background: "#eee" }}>
+        <Content style={{ padding: "50px" }}>
+          <div className="site-layout-content" style={{ padding: "10px" }}>
             <Routes>
               <Route
                 path="/movies"
@@ -61,6 +61,7 @@ function App() {
             </Routes>
           </div>
         </Content>
+
         <Footer style={{ textAlign: "center" }}>
           Ant Design ©2023 Created by Ant UED
         </Footer>

@@ -25,6 +25,8 @@ const Home = (props: any) => {
   return (
     <div id="home">
       <h1>Popular Downloads</h1>
+      <br />
+      <br />
       {featured_movies !== true ? (
         <List
           grid={{ gutter: 50, column: 6 }}

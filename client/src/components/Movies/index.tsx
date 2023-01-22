@@ -66,6 +66,8 @@ const MovieList = (props: any) => {
       />
       {movies && !isSearching ? (
         <List
+          style={{ margin: "10px" }}
+          size="large"
           grid={{
             gutter: 16,
             column: 6,
@@ -96,6 +98,8 @@ const MovieList = (props: any) => {
         />
       ) : (
         <List
+          style={{ margin: "10px" }}
+          size="large"
           grid={{
             gutter: 16,
             column: 6,
@@ -121,6 +125,7 @@ const MovieList = (props: any) => {
         />
       )}
       <Pagination
+        responsive={true}
         showSizeChanger
         pageSizeOptions={["24", "48"]}
         onShowSizeChange={(current, pageSize) =>

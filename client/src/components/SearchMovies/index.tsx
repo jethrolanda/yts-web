@@ -22,6 +22,7 @@ const SearchMovies = (props: any) => {
       <Row>
         <Col span={8}>
           <Search
+            size="large"
             placeholder="Search Movies"
             onSearch={(value) => searchMoviesAcction(value)}
             enterButton
